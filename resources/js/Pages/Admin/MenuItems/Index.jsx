@@ -9,8 +9,10 @@ function Index({ auth, menuItems, categories, filters }) {
         }
     };
 
-    const handleFilter = (e) => {
-        router.get(route("admin.menu-items.index"), { category: e.target.value });
+    const toggleAvailability = (id) => {
+        router.post(route("admin.menu-items.toggleAvailability", id), {}, {
+            preserveScroll: true,
+        });
     };
 
     return (
@@ -27,7 +29,6 @@ function Index({ auth, menuItems, categories, filters }) {
 
             {/* Top Controls */}
             <div className="flex justify-between items-center gap-4">
-                {/* Filter kategori */}
                 <div className="flex gap-2">
                     <select
                         value={filters?.category || ""}
@@ -47,7 +48,6 @@ function Index({ auth, menuItems, categories, filters }) {
                         ))}
                     </select>
 
-                    {/* Search bar */}
                     <input
                         type="text"
                         placeholder="Cari menu..."
@@ -62,28 +62,6 @@ function Index({ auth, menuItems, categories, filters }) {
                         }}
                         className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
                     />
-                </div>
-
-                {/* Pagination */}
-                <div className="flex space-x-2">
-                    {menuItems.links.map((link, index) => {
-                        let label = link.label;
-                        if (label.includes("pagination.previous")) label = "« Previous";
-                        if (label.includes("pagination.next")) label = "Next »";
-
-                        return (
-                            <Link
-                                key={index}
-                                href={link.url || "#"}
-                                className={`px-3 py-1 rounded text-sm ${
-                                    link.active
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                } ${!link.url ? "pointer-events-none opacity-50" : ""}`}
-                                dangerouslySetInnerHTML={{ __html: label }}
-                            />
-                        );
-                    })}
                 </div>
             </div>
 
@@ -103,9 +81,9 @@ function Index({ auth, menuItems, categories, filters }) {
                         {menuItems.data.map((item) => (
                             <tr key={item.id} className="border-t hover:bg-gray-50">
                                 <td className="p-3">
-                                    {item.image_url ? (
+                                    {item.image ? (
                                         <img
-                                            src={item.image_url}
+                                            src={`/storage/${item.image}`}
                                             alt={item.name}
                                             className="w-12 h-12 object-cover rounded"
                                         />
@@ -142,6 +120,19 @@ function Index({ auth, menuItems, categories, filters }) {
                                         >
                                             Hapus
                                         </button>
+                                        {/* Toggle Ketersediaan */}
+                                        <div
+                                            onClick={() => toggleAvailability(item.id)}
+                                            className={`relative w-12 h-6 flex items-center rounded-full cursor-pointer transition-all duration-300 ${
+                                                item.availability ? "bg-green-500" : "bg-gray-400"
+                                            }`}
+                                        >
+                                            <div
+                                                className={`absolute bg-white w-5 h-5 rounded-full shadow transform transition-transform duration-300 ${
+                                                    item.availability ? "translate-x-6" : "translate-x-1"
+                                                }`}
+                                            />
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -153,6 +144,8 @@ function Index({ auth, menuItems, categories, filters }) {
     );
 }
 
-Index.layout = (page) => <AdminLayout auth={page.props.auth}>{page}</AdminLayout>;
+Index.layout = (page) => (
+    <AdminLayout auth_admin={page.props.auth_admin}>{page}</AdminLayout>
+);
 
 export default Index;

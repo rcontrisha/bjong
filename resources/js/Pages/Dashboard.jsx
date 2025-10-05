@@ -10,7 +10,7 @@ function MenuCard({ item }) {
             className="p-2 bg-[#2E2E2E] rounded-xl shadow hover:bg-[#4D4D4D] transition block"
         >
             <img
-                src={item.image}
+                src={`/storage/${item.image}`}
                 alt={item.name}
                 loading="lazy"
                 className="w-full h-20 object-cover rounded-lg mb-1"
@@ -110,6 +110,20 @@ export default function Dashboard({
                         </div>
                     )}
 
+                    {/* Recommendations */}
+                    {recommendations.length > 0 && (
+                        <div className="mb-6">
+                            <h3 className="text-xl font-semibold mb-3">
+                                🎯 Rekomendasi Buat Kamu
+                            </h3>
+                            <div className="grid grid-cols-2 gap-2">
+                                {recommendations.map((item) => (
+                                    <MenuCard key={item.id} item={item} />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Category Section */}
                     <div className="mb-3">
                         <h3 className="text-xl font-semibold mb-3">
@@ -159,10 +173,10 @@ export default function Dashboard({
                         />
                     </div>
 
-                    {/* Popular Menu */}
+                    {/* All Menu */}
                     <div className="mb-6">
                         <h3 className="text-xl font-semibold mb-3">
-                            ✨ Menu Populer
+                            ✨ Semua Menu
                         </h3>
                         <div className="grid grid-cols-3 gap-3">
                             {filteredMenu.slice(0, 12).map((item) => (
@@ -170,20 +184,6 @@ export default function Dashboard({
                             ))}
                         </div>
                     </div>
-
-                    {/* Recommendations */}
-                    {recommendations.length > 0 && (
-                        <div className="mb-6">
-                            <h3 className="text-xl font-semibold mb-3">
-                                🎯 Rekomendasi Buat Kamu
-                            </h3>
-                            <div className="grid grid-cols-2 gap-2">
-                                {recommendations.map((item) => (
-                                    <MenuCard key={item.id} item={item} />
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </div>
 
                 {/* Footer */}

@@ -55,10 +55,12 @@ class CartController extends Controller
             'variant_combination' => 'nullable|string',
             'quantity' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0',
-            'image' => 'required|string'
+            'image' => 'required|string',
+            'notes' => 'nullable|string|max:255', // 🆕 Tambah validasi notes
         ]);
 
         $cart = session()->get('cart', []);
+
         $newItem = [
             'id' => uniqid(),
             'menu_item_id' => $request->menu_item_id,
@@ -67,24 +69,24 @@ class CartController extends Controller
             'quantity' => $request->quantity,
             'price' => $request->price,
             'image' => $request->image,
-            'added_at' => now()->toDateTimeString()
+            'notes' => $request->notes, // 🆕 Simpan notes
+            'added_at' => now()->toDateTimeString(),
         ];
 
-        // Check if item already exists in cart
         $existingIndex = null;
         foreach ($cart as $index => $item) {
-            if ($item['menu_item_id'] === $request->menu_item_id && 
-                $item['variant_combination'] === $request->variant_combination) {
+            if ($item['menu_item_id'] === $request->menu_item_id &&
+                $item['variant_combination'] === $request->variant_combination &&
+                ($item['notes'] ?? '') === ($request->notes ?? '') // 🆕 Notes dianggap pembeda juga
+            ) {
                 $existingIndex = $index;
                 break;
             }
         }
 
         if ($existingIndex !== null) {
-            // Update quantity if item exists
             $cart[$existingIndex]['quantity'] += $request->quantity;
         } else {
-            // Add new item to cart
             $cart[] = $newItem;
         }
 

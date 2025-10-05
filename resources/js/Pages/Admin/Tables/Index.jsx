@@ -4,10 +4,10 @@ import AdminLayout from "@/Layouts/AdminLayout";
 import Breadcrumb from "@/Components/Breadcrumb";
 
 export default function Index() {
-    const { tables, flash } = usePage().props;
+    const { tables, flash, auth_admin } = usePage().props;
 
     return (
-        <AdminLayout>
+        <AdminLayout auth_admin={auth_admin}>
             <Breadcrumb
                 items={[
                     { label: "Dashboard", href: route("admin.dashboard") },

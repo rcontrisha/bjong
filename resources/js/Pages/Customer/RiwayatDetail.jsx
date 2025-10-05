@@ -28,14 +28,11 @@ export default function RiwayatDetail() {
     const handleRepeatOrder = () => {
         router.post(route("customer.orders.repeat", order.id), {}, {
             onSuccess: () => {
-                // Simple toast / alert
                 const toast = document.createElement("div");
                 toast.innerText = "✅ Order berhasil ditambahkan ke cart!";
                 toast.className = "fixed bottom-5 right-5 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg";
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 3000);
-
-                // Redirect ke cart setelah 0.5s biar toast kelihatan dulu
                 setTimeout(() => router.visit(route("customer.cart.index")), 500);
             },
             onError: (errors) => {
@@ -44,6 +41,22 @@ export default function RiwayatDetail() {
             }
         });
     };
+
+    // Tentukan warna & teks badge
+    const getBadge = (order) => {
+        if (order.status === "paid" || order.payment_status === "settlement") {
+            return { color: "bg-green-600", text: "PAID" };
+        }
+        if (order.status === "failed" || order.payment_status === "expire") {
+            return { color: "bg-red-600", text: "FAILED" };
+        }
+        if (order.status === "cancelled" || order.payment_status === "cancel") {
+            return { color: "bg-gray-600", text: "CANCELLED" };
+        }
+        return { color: "bg-yellow-600", text: "PENDING" };
+    };
+
+    const badge = getBadge(order);
 
     return (
         <SidebarLayout auth={auth}>
@@ -57,7 +70,16 @@ export default function RiwayatDetail() {
                     </Link>
                 </div>
 
-                <h2 className="text-2xl font-bold mb-6">📄 Detail Order #{order.id}</h2>
+                <div className="relative mb-6 bg-[#1e1e1e] rounded-xl p-5">
+                    <div className="flex justify-between items-start">
+                        <h2 className="text-2xl font-bold">📄 Detail Order #{order.id}</h2>
+                        <div
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${badge.color}`}
+                        >
+                            {badge.text}
+                        </div>
+                    </div>
+                </div>
 
                 {/* Info Pemesan */}
                 <div className="bg-[#1e1e1e] rounded-xl p-5 mb-6">
@@ -67,12 +89,6 @@ export default function RiwayatDetail() {
                     <p><span className="font-semibold">Telepon: </span>{order.user ? order.user.phone : order.guest_phone || "-"}</p>
                     <p><span className="font-semibold">Tanggal: </span>{formatDateTime(order.created_at)}</p>
                     <p><span className="font-semibold">Metode Pembayaran: </span>{order.payment_method || "-"}</p>
-                    <p>
-                        <span className="font-semibold">Status Pembayaran: </span>
-                        <span className={`px-2 py-1 rounded-lg ${order.payment_status === "paid" ? "bg-green-600" : "bg-yellow-600"}`}>
-                            {order.payment_status.toUpperCase()}
-                        </span>
-                    </p>
                 </div>
 
                 {/* Items */}
@@ -82,8 +98,14 @@ export default function RiwayatDetail() {
                         <div key={item.id} className="flex justify-between mb-2 border-b border-gray-700 pb-2">
                             <div>
                                 <p className="font-semibold">{item.name}</p>
-                                {item.variant_combination && <p className="text-gray-400 text-sm">Varian: {item.variant_combination}</p>}
-                                <p className="text-gray-400 text-sm">Qty: {item.quantity} x {formatPrice(item.price)}</p>
+                                {item.variant_combination && (
+                                    <p className="text-gray-400 text-sm">
+                                        Varian: {item.variant_combination}
+                                    </p>
+                                )}
+                                <p className="text-gray-400 text-sm">
+                                    Qty: {item.quantity} x {formatPrice(item.price)}
+                                </p>
                             </div>
                             <p className="font-semibold">{formatPrice(item.subtotal)}</p>
                         </div>

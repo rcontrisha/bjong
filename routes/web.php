@@ -147,6 +147,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
 
     // Menu Items Management
     Route::resource('menu-items', MenuItemController::class);
+    Route::post('/menu-items/{menuItem}/toggle-availability', [MenuItemController::class, 'toggleAvailability'])->name('menu-items.toggleAvailability');
 
     // Table Management
     Route::resource('tables', TableController::class);

@@ -8,6 +8,7 @@ use App\Models\MenuItem;
 use App\Models\ItemVariantPrice;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
 
 class MenuItemController extends Controller
 {
@@ -81,6 +82,7 @@ class MenuItemController extends Controller
         ]);
     }
 
+    // UPDATE method ini
     public function update(Request $request, MenuItem $menuItem)
     {
         $data = $request->validate([
@@ -89,8 +91,18 @@ class MenuItemController extends Controller
             'category_id' => 'required|exists:categories,id',
             'base_price' => 'nullable|numeric',
             'has_variants' => 'boolean',
-            'variants' => 'array'
+            'variants' => 'array',
+            'image' => 'nullable|image|max:2048' // Tambah validasi gambar
         ]);
+
+        // Handle file upload
+        if ($request->file('image')) {
+            // Hapus gambar lama jika ada
+            if ($menuItem->image) {
+                Storage::disk('public')->delete($menuItem->image);
+            }
+            $data['image'] = $request->file('image')->store('menu_images', 'public');
+        }
 
         $menuItem->update($data);
 
@@ -98,22 +110,39 @@ class MenuItemController extends Controller
         $menuItem->variantPrices()->delete();
         if ($request->has_variants && $request->variants) {
             foreach ($request->variants as $variant) {
-                ItemVariantPrice::create([
-                    'menu_item_id' => $menuItem->id,
-                    'name' => $variant['name'],
-                    'price' => $variant['price'],
-                ]);
+                if (!empty($variant['variant_combination']) && !empty($variant['price'])) {
+                    ItemVariantPrice::create([
+                        'menu_item_id' => $menuItem->id,
+                        'variant_combination' => $variant['variant_combination'],
+                        'price' => $variant['price'],
+                    ]);
+                }
             }
         }
 
         return redirect()->route('admin.menu-items.index')->with('success', 'Menu berhasil diperbarui!');
     }
 
+
+    // UPDATE method ini
     public function destroy(MenuItem $menuItem)
     {
+        // Hapus gambar dari storage
+        if ($menuItem->image) {
+            Storage::disk('public')->delete($menuItem->image);
+        }
+
         $menuItem->variantPrices()->delete();
         $menuItem->delete();
 
         return redirect()->route('admin.menu-items.index')->with('success', 'Menu berhasil dihapus!');
+    }
+
+    public function toggleAvailability(MenuItem $menuItem)
+    {
+        $menuItem->availability = !$menuItem->availability;
+        $menuItem->save();
+
+        return back()->with('success', 'Ketersediaan menu diperbarui.');
     }
 }

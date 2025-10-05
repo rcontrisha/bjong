@@ -16,8 +16,18 @@ class MenuItem extends Model
         'description',
         'category_id',
         'base_price',
-        'has_variants'
+        'has_variants',
+        'image',
+        'availability'
     ];
+
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image) return null;
+
+        // Pastikan path absolut, biar ga ketarik prefix /admin
+        return asset('storage/' . ltrim($this->image, '/'));
+    }
 
     public function category()
     {

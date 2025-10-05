@@ -4,7 +4,7 @@ import AdminLayout from "@/Layouts/AdminLayout";
 import Breadcrumb from "@/Components/Breadcrumb";
 
 export default function Index() {
-    const { communities } = usePage().props;
+    const { communities, auth_admin } = usePage().props;
     const [showPendingModal, setShowPendingModal] = useState(false);
 
     const pendingCommunities = communities.filter(
@@ -26,7 +26,7 @@ export default function Index() {
     };
 
     return (
-        <AdminLayout>
+        <AdminLayout auth_admin={auth_admin}>
             <Breadcrumb
                 items={[
                     { label: "Dashboard", href: route("admin.dashboard") },

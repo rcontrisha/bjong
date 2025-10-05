@@ -52,7 +52,7 @@ class DashboardController extends Controller
                     'id'          => $menu->id,
                     'name'        => $menu->name,
                     'price'       => $priceDisplay,
-                    'image'       => 'https://source.unsplash.com/200x200/?' . urlencode($menu->name),
+                    'image'       => $menu->image,
                     'category'    => $menu->category->name ?? 'Uncategorized',
                     'description' => $menu->description,
                 ];

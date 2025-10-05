@@ -135,60 +135,65 @@ export default function Cart() {
                     </div>
                 ) : (
                     <div className="space-y-6">
-                        {/* Cart Items */}
                         {cartItems.map((item) => (
                             <div
                                 key={item.id}
-                                className="bg-[#1e1e1e] rounded-xl p-4 flex items-center shadow-sm"
+                                className="bg-[#1e1e1e] rounded-xl p-4 flex flex-col shadow-sm"
                             >
-                                <img
-                                    src={item.image}
-                                    alt={item.name}
-                                    className="w-16 h-16 object-cover rounded-lg mr-4"
-                                />
+                                {/* Bagian atas: detail item */}
+                                <div className="flex items-center">
+                                    <img
+                                        src={`/storage/${item.image}`}
+                                        alt={item.name}
+                                        className="w-16 h-16 object-cover rounded-lg mr-4"
+                                    />
 
-                                <div className="flex-1">
-                                    <h3 className="font-semibold text-white">
-                                        {item.name}
-                                    </h3>
-                                    {item.variant_combination && (
-                                        <p className="text-gray-400 text-sm">
-                                            Varian: {item.variant_combination}
+                                    <div className="flex-1">
+                                        <h3 className="font-semibold text-white">{item.name}</h3>
+                                        {item.variant_combination && (
+                                            <p className="text-gray-400 text-sm">
+                                                Varian: {item.variant_combination}
+                                            </p>
+                                        )}
+                                        <p className="text-red-500 font-semibold">
+                                            {formatPrice(item.price)}
                                         </p>
-                                    )}
-                                    <p className="text-red-500 font-semibold">
-                                        {formatPrice(item.price)}
-                                    </p>
+                                    </div>
+
+                                    <div className="flex items-center space-x-2">
+                                        <button
+                                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                            className="bg-gray-700 hover:bg-gray-600 text-white w-7 h-7 rounded-full flex items-center justify-center"
+                                        >
+                                            -
+                                        </button>
+                                        <span className="mx-2">{item.quantity}</span>
+                                        <button
+                                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                            className="bg-gray-700 hover:bg-gray-600 text-white w-7 h-7 rounded-full flex items-center justify-center"
+                                        >
+                                            +
+                                        </button>
+                                        <button
+                                            onClick={() => removeItem(item.id)}
+                                            className="ml-4 text-red-500 hover:text-red-400 text-lg"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <div className="flex items-center space-x-2">
-                                    <button
-                                        onClick={() =>
-                                            updateQuantity(item.id, item.quantity - 1)
-                                        }
-                                        className="bg-gray-700 hover:bg-gray-600 text-white w-7 h-7 rounded-full flex items-center justify-center"
-                                    >
-                                        -
-                                    </button>
-
-                                    <span className="mx-2">{item.quantity}</span>
-
-                                    <button
-                                        onClick={() =>
-                                            updateQuantity(item.id, item.quantity + 1)
-                                        }
-                                        className="bg-gray-700 hover:bg-gray-600 text-white w-7 h-7 rounded-full flex items-center justify-center"
-                                    >
-                                        +
-                                    </button>
-
-                                    <button
-                                        onClick={() => removeItem(item.id)}
-                                        className="ml-4 text-red-500 hover:text-red-400 text-lg"
-                                    >
-                                        ✕
-                                    </button>
-                                </div>
+                                {/* Bagian bawah: catatan */}
+                                <textarea
+                                    placeholder="Catatan untuk item ini (opsional)"
+                                    className="mt-3 w-full p-2 rounded-lg bg-gray-700 text-white text-sm border border-gray-700 focus:ring-2 focus:ring-red-500"
+                                    defaultValue={item.notes || ""}
+                                    onBlur={(e) => {
+                                        router.put(route("customer.cart.update", item.id), {
+                                            notes: e.target.value,
+                                        });
+                                    }}
+                                />
                             </div>
                         ))}
 

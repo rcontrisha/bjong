@@ -3,10 +3,10 @@ import { Link, usePage, router } from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 
 export default function Index({ shiftAccounts }) {
-    const { flash } = usePage().props;
+    const { flash, auth_admin } = usePage().props;
 
     return (
-        <AdminLayout>
+        <AdminLayout auth_admin={auth_admin}>
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold">Manage Akun Shift</h1>
                 <Link

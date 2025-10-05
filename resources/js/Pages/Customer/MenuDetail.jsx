@@ -8,6 +8,7 @@ export default function MenuDetail() {
 
     const [selectedOptions, setSelectedOptions] = useState({});
     const [quantity, setQuantity] = useState(1);
+    const [notes, setNotes] = useState(""); // 🆕 Catatan
     const [currentPrice, setCurrentPrice] = useState(menuItem.base_price || 0);
 
     // Group variants by type
@@ -92,18 +93,17 @@ export default function MenuDetail() {
         quantity: 1,
         price: 0,
         image: "",
+        notes: "", // 🆕 Tambah di form
     });
 
     transform((data) => ({
         menu_item_id: menuItem.id,
         name: menuItem.name,
-        variant_combination:
-            Object.values(selectedOptions).join(" + ") || null,
+        variant_combination: Object.values(selectedOptions).join(" + ") || null,
         quantity: quantity,
         price: currentPrice,
-        image: `https://source.unsplash.com/200x200/?${encodeURIComponent(
-            menuItem.name
-        )}`,
+        image: menuItem.image,
+        notes: notes.trim() || null, // 🆕 Kirim notes ke backend
     }));
 
     const handleAddToCart = () => {
@@ -124,9 +124,7 @@ export default function MenuDetail() {
             (group) => selectedOptions[group]
         );
 
-    const imageUrl = `https://source.unsplash.com/400x300/?${encodeURIComponent(
-        menuItem.name
-    )}`;
+    const imageUrl = menuItem.image;
 
     return (
         <SidebarLayout auth={auth}>
@@ -145,7 +143,7 @@ export default function MenuDetail() {
                 <div className="bg-[#2E2E2E] rounded-xl p-4 shadow-lg mb-6">
                     {/* Image */}
                     <img
-                        src={imageUrl}
+                        src={`/storage/${imageUrl}`}
                         alt={menuItem.name}
                         className="w-full h-48 object-cover rounded-lg mb-4"
                     />
@@ -220,8 +218,21 @@ export default function MenuDetail() {
                                     )
                                 )}
                             </div>
-                        )}
+                        )
+                    }
 
+                    {/* 🆕 Input Catatan */}
+                    <div className="mb-4">
+                        <h3 className="text-md font-semibold mb-2">Catatan (Opsional)</h3>
+                        <textarea
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            placeholder="Misalnya: Jangan pakai es, level pedas sedang..."
+                            className="w-full bg-[#3E3E3E] border border-gray-600 rounded-lg p-2 text-sm text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+                            rows={2}
+                        ></textarea>
+                    </div>
+                    
                     {/* Quantity */}
                     <div className="mb-4">
                         <h3 className="text-md font-semibold mb-2">

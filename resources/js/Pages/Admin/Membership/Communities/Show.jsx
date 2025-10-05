@@ -4,7 +4,7 @@ import AdminLayout from "@/Layouts/AdminLayout";
 import Breadcrumb from "@/Components/Breadcrumb";
 
 export default function Show() {
-    const { community } = usePage().props;
+    const { community, auth_admin } = usePage().props;
 
     // Form untuk tambah transaksi poin
     const { data, setData, post, processing, reset, errors } = useForm({
@@ -36,7 +36,7 @@ export default function Show() {
     };
 
     return (
-        <AdminLayout>
+        <AdminLayout auth_admin={auth_admin}>
             <Breadcrumb
                 items={[
                     { label: "Dashboard", href: route("admin.dashboard") },
