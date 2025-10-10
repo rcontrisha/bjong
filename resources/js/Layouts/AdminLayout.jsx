@@ -75,6 +75,14 @@ export default function AdminLayout({ auth_admin = {}, children }) {
                             Dashboard
                         </Link>
                         <Link
+                            href={route("admin.reports.transactions.index")}
+                            className={navLinkClass("admin.reports.transactions.index")}
+                            onClick={() => setIsOpen(false)}
+                        >
+                            <FileText size={18} />
+                            Laporan Transaksi
+                        </Link>
+                        <Link
                             href={route("admin.menu-items.index")}
                             className={navLinkClass("admin.menu-items.*")}
                             onClick={() => setIsOpen(false)}

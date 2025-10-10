@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\CommunityTransactionController as AdminCommunityT
 use App\Http\Controllers\Admin\CommunityRedemptionController as AdminCommunityRedemptionController;
 use App\Http\Controllers\Admin\ShiftAccountController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Admin\TransactionReportController;
 
 // Landing page
 Route::get('/', function () {
@@ -171,6 +172,11 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
 
     // Shift Accounts
     Route::resource('shift-accounts', ShiftAccountController::class);
+
+    // Reports
+    Route::get('/reports/transactions', [TransactionReportController::class, 'index'])->name('reports.transactions.index');
+
+    Route::get('/reports/transactions/export', [TransactionReportController::class, 'exportExcel'])->name('reports.transactions.export');
 });
 
 require __DIR__.'/auth.php';

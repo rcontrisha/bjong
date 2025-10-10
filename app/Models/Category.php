@@ -14,4 +14,9 @@ class Category extends Model
     protected $fillable = ['name', 'description', 'parent_id'];
 
     public $timestamps = false; // kalau tabel nggak ada created_at / updated_at
+
+    public function menuItems()
+    {
+        return $this->hasMany(MenuItem::class, 'category_id', 'id');
+    }
 }
